@@ -11,6 +11,7 @@ class DataLoader(ABC):
     def __init__(self, config: CAPConfig) -> None:
         """Initialize the data loader with a configuration dictionary."""
         self.config = config
+        self.dataset = None
     
     def get_input(self) -> List:
         """Get input data to the generation models."""
@@ -22,10 +23,13 @@ class DataLoader(ABC):
 
     def get_eval_metrics(self) -> Optional[Dict[str, Any]]:
         """Get metrics to compute during evaluation."""
-        curr_supported_metrics = ["em", "f1"]
-        metric = self.config.get("metrics", None)
+        curr_supported_metrics = ["em", "f1", "llm-as-a-judge"]
+
+        metric = self.config.metrics
+
         if not metric:
             return curr_supported_metrics
+            
         if isinstance(metric, str):
             metric = [metric]
         elif isinstance(metric, list):
