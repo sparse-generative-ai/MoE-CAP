@@ -35,9 +35,6 @@ The results will be stored under `outputs/`.
 ## Benchmark Pipeline
 ![Benchmark Pipeline](assets/cap_design.png)
 
-## Radar Plot Example:
-![CAP Radar](assets/radar.png)
-
 ## Contributing to MoE-CAP
 
 Thank you for your interest in contributing to the MoE-CAP project! We welcome contributions from everyone. Below you'll find guidance on how to set up your development environment, understand our architecture, and contribute effectively. If you have any questions or wish to discuss your contributions, please reach out to Yinsicheng Jiang or Yao Fu via email at [ysc.jiang@ed.ac.uk](mailto:ysc.jiang@ed.ac.uk) or [Y.Fu@ed.ac.uk](mailto:y.fu@ed.ac.uk).
