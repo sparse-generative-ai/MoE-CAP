@@ -2,6 +2,9 @@
 
 MoE-CAP is a benchmarking method designed to evaluate sparse MoE systems by integrating Cost, Accuracy, and Performance across these three dimensions.
 
+## News
+- MoE-CAP has been accepted to NeurIPS 2025 Dataset and Benchmark Track 🎉 See you in San Diego, US.
+
 ## Requirements
 Python: >= 3.9
 
