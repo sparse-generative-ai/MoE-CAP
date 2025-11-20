@@ -8,7 +8,7 @@ from . import GSM8KLoader, LongBenchV2Loader, NuminaMathLoader
 
 
 _REGISTRY = {
-    "gsm8k": (GSM8KLoader, 8192),
+    "gsm8k": (GSM8KLoader, 8192), #(Dataloader Class, default_max_new_tokens)
     "longbench_v2": (LongBenchV2Loader, 8192),
     "numinamath": (NuminaMathLoader, 8192),
 }
