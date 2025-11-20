@@ -3,3 +3,4 @@ transformers
 torch
 PyYAML
 GPUtil
+huggingface_hub
