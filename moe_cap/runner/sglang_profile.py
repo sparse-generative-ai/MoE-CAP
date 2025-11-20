@@ -2,6 +2,7 @@ import torch
 import argparse
 import os
 from collections import defaultdict, Counter
+from datetime import datetime
 from moe_cap.model_loader import HFModelInfoRetriever
 from moe_cap.utils.continuous_batching_utils import _calculate_continuous_metrics
 from moe_cap.utils.acc_metrics import compute_accuracy_metrics, format_accuracy_summary
@@ -271,7 +272,8 @@ class SGLangMoEActivationAnalyzer:
             # Metrics go to output_dir
             metrics_dest_dir = os.path.join(self.output_dir, self.get_model_simple_name())
             os.makedirs(metrics_dest_dir, exist_ok=True)
-            output_path = os.path.join(metrics_dest_dir, f"cap_metrics_{dataset_name}.json")
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            output_path = os.path.join(metrics_dest_dir, f"cap_metrics_{dataset_name}_{timestamp}.json")
             with open(output_path, 'w', encoding='utf-8') as f:
                 json.dump(res_dict, f, indent=4)
             print(f"Metrics written to {output_path}")

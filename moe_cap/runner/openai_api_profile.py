@@ -6,6 +6,7 @@ import aiohttp
 import sys
 import time
 import traceback
+from datetime import datetime
 from typing import List, Dict, Any, Tuple, Optional
 from dataclasses import dataclass, field
 from tqdm.asyncio import tqdm as async_tqdm
@@ -566,7 +567,8 @@ class OpenAIAPIMoEProfiler:
             dest_dir = os.path.join(self.output_dir, self.get_model_simple_name())
             os.makedirs(dest_dir, exist_ok=True)
             
-            output_path = os.path.join(dest_dir, f"cap_metrics_{dataset_name}.json")
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            output_path = os.path.join(dest_dir, f"cap_metrics_{dataset_name}_{timestamp}.json")
             with open(output_path, 'w', encoding='utf-8') as f:
                 json.dump(res_dict, f, indent=4)
             print(f"Metrics written to {output_path}")
