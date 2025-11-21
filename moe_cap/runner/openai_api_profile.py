@@ -173,7 +173,7 @@ class OpenAIAPIMoEProfiler:
         attn_info = self.model_info.get_attention_info()
 
         # precision and dtype
-        self.precision = self.model_info.get_model_precision_bits()
+        self.precision = self.model_info.get_model_precision_bytes()
         self.used_dtype = config.precision or "bfloat16"
 
         # architecture info

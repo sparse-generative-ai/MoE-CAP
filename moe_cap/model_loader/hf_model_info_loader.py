@@ -76,7 +76,7 @@ class HFModelInfoRetriever(BaseModelInfoRetriever):
 
         self.model_name = self.config.model_id
 
-    def get_model_precision_bits(self) -> float:
+    def get_model_precision_bytes(self) -> float:
         p = (self.config.precision or "").lower()
         if p in ("float32", "fp32"):
             return 4.0
