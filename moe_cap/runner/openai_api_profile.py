@@ -545,8 +545,8 @@ class OpenAIAPIMoEProfiler:
             # Auto-detect GPU type and number from hardware_utils
             gpu_raw_type = res_dict.get("gpu_raw_type", None)
             if gpu_raw_type:
-                gpu_name_pattern = re.compile(r'NVIDIA\s+(RTX\s+)?([A-Z0-9]+)')
-                match = gpu_name_pattern.search(gpu_raw_type)
+                gpu_name_pattern = re.compile(r'NVIDIA[\s-]+(RTX[\s-]+)?([A-Z0-9]+)')
+                match = gpu_name_pattern.search(gpu_raw_type)  
                 if match:
                     gpu_type = ''.join(filter(None, match.groups())).strip()
                 else:

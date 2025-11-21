@@ -54,6 +54,7 @@ def _dump_to_file(name, data):
     torch.save(data, str(path_output))
 
 sglang_eplb_expert_distribution._dump_to_file = _dump_to_file
+GLOBAL_GPU_TYPE = get_gpu_details()
 
 
 class _ExpertDistributionRecorderReal2(ExpertDistributionRecorder):
@@ -227,7 +228,7 @@ def forward_expert_record(
     ) -> Tuple[Union[LogitsProcessorOutput, PPProxyTensors], bool]:
         self.forward_pass_id += 1
         gpu_num = self.tp_size * self.pp_size
-        gpu_raw_type = get_gpu_details()
+        gpu_raw_type = GLOBAL_GPU_TYPE
 
         with get_global_expert_distribution_recorder().with_forward_pass(
             self.forward_pass_id,

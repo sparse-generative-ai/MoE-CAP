@@ -141,7 +141,7 @@ class RecordingState:
         return count
 
 recording_state = RecordingState()
-
+GLOBAL_GPU_TYPE = get_gpu_details()
 # ============================================================================
 # Custom execute_model implementation
 # ============================================================================
@@ -153,7 +153,7 @@ def execute_model_custom(
 ) -> Union[ModelRunnerOutput, AsyncModelRunnerOutput, IntermediateTensors]:
     """Custom execute_model with latency tracking."""
     world_size = self.vllm_config.parallel_config.world_size
-    gpu_raw_type = get_gpu_details()
+    gpu_raw_type = GLOBAL_GPU_TYPE
     with record_function_or_nullcontext("Preprocess"):
         with self.synchronize_input_prep():
             # Update persistent batch states.
