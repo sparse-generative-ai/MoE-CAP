@@ -94,5 +94,6 @@ def _calculate_continuous_metrics(n_layers, d_model, gpu_raw_type,
         'decoding_throughput': decoding_tp,
         'prefill_tp': prefill_tp,
         'ttft': ttft,
-        'tpot': tpot
+        'tpot': tpot,
+        'gpu_raw_type': gpu_raw_type
     }
