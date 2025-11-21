@@ -48,6 +48,8 @@ from vllm.v1.worker.utils import is_residual_scattered_for_sp
 from vllm.v1.structured_output.utils import apply_grammar_bitmask
 from vllm.logger import init_logger
 
+from moe_cap.utils.hardware_utils import get_gpu_details
+
 logger = init_logger(__name__)
 
 # ============================================================================
@@ -151,6 +153,7 @@ def execute_model_custom(
 ) -> Union[ModelRunnerOutput, AsyncModelRunnerOutput, IntermediateTensors]:
     """Custom execute_model with latency tracking."""
     world_size = self.vllm_config.parallel_config.world_size
+    gpu_raw_type = get_gpu_details()
     with record_function_or_nullcontext("Preprocess"):
         with self.synchronize_input_prep():
             # Update persistent batch states.
@@ -347,7 +350,8 @@ def execute_model_custom(
             "seq_lens_sum": sum_seq_len,
             "forward_mode": forward_mode,
             "expert_activation": 0,  # Will be populated later with actual expert data,
-            "gpu_num": world_size
+            "gpu_num": world_size,
+            "gpu_raw_type": gpu_raw_type
         }
         recording_state.add_record(rec_dict)
     

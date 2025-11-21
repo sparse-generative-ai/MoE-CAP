@@ -26,8 +26,9 @@ import os
 import sys
 from contextlib import contextmanager
 import torch
-from pathlib import Path
 import json
+
+from moe_cap.utils.hardware_utils import get_gpu_details
 
 
 _OutputMode = Literal["file", "object"]
@@ -226,6 +227,7 @@ def forward_expert_record(
     ) -> Tuple[Union[LogitsProcessorOutput, PPProxyTensors], bool]:
         self.forward_pass_id += 1
         gpu_num = self.tp_size * self.pp_size
+        gpu_raw_type = get_gpu_details()
 
         with get_global_expert_distribution_recorder().with_forward_pass(
             self.forward_pass_id,
@@ -288,7 +290,8 @@ def forward_expert_record(
                 "seq_lens_sum": sum_seq_len,
                 "forward_mode": forward_mode,
                 "expert_activation": non_zero_value,
-                "gpu_num": gpu_num
+                "gpu_num": gpu_num,
+                "gpu_raw_type": gpu_raw_type
             }
             get_global_expert_distribution_recorder().expert_record_list.append(record_dict)
             logger.info(f"Forward pass {self.forward_pass_id} completed with latency {latency:.4f}s, expert activation {non_zero_value}")

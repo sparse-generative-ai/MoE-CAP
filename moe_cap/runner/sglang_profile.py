@@ -6,7 +6,6 @@ from datetime import datetime
 from moe_cap.model_loader import HFModelInfoRetriever
 from moe_cap.utils.continuous_batching_utils import _calculate_continuous_metrics
 from moe_cap.utils.acc_metrics import compute_accuracy_metrics, format_accuracy_summary
-from moe_cap.utils.hardware_utils import parse_nvidia_smi, GPU_Name
 from moe_cap.configs import CAPConfig
 from moe_cap.data_loader import GSM8KLoader
 from moe_cap.data_loader.loader_registry import get_loader_for_task
@@ -16,6 +15,7 @@ from sglang.lang.backend.runtime_endpoint import RuntimeEndpoint
 import sglang as sgl
 import json
 from transformers import AutoTokenizer
+import re
 
 class SGLangMoEActivationAnalyzer:
     def __init__(self, config: CAPConfig, output_dir: str = None):
@@ -105,9 +105,11 @@ class SGLangMoEActivationAnalyzer:
         return arguments  # Single batch for auto mod
     
     def get_metrics(self, records, num_gpus=1):
+        gpu_raw_types = records[0].get("gpu_raw_type", None)
         res_dict = _calculate_continuous_metrics(
             n_layers=self.n_layers,
             d_model=self.d_model,
+            gpu_raw_type=gpu_raw_types,
             n_attn_heads=self.n_kv_heads,
             d_head=self.d_head,
             n_kv_heads=self.n_kv_heads,
@@ -151,7 +153,6 @@ class SGLangMoEActivationAnalyzer:
             # Load and prepare inputs
             all_input_raw, max_new_tokens = self._load_data_for_task(dataset_name)
             batched_inputs = self._prepare_inputs(all_input_raw, max_new_tokens)
-            batched_inputs = batched_inputs
 
             # Get ground truth targets for evaluation
             try:
@@ -245,13 +246,16 @@ class SGLangMoEActivationAnalyzer:
             
             
             # Auto-detect GPU type from hardware_utils
-            gpu_type = None
-            try:
-                gpu_stats = parse_nvidia_smi()
-                if gpu_stats and len(gpu_stats) > 0:
-                    gpu_type = gpu_stats[0].get(GPU_Name)
-            except Exception as e:
-                print(f"Warning: Could not detect GPU type: {e}")
+            gpu_raw_type = res_dict.get("gpu_raw_type", None)
+            if gpu_raw_type:
+                gpu_name_pattern = re.compile(r'NVIDIA\s+(RTX\s+)?([A-Z0-9]+)')
+                match = gpu_name_pattern.search(gpu_raw_type)
+                if match:
+                    gpu_type = ''.join(filter(None, match.groups())).strip()
+                else:
+                    gpu_type = "Unknown"
+            else:
+                gpu_type = "Unknown"
             
             # Add metadata fields to the output
             res_dict["model_name"] = self.hf_model_name
@@ -259,10 +263,7 @@ class SGLangMoEActivationAnalyzer:
             res_dict["precision"] = self.used_dtype
             res_dict["e2e_s"] = round(e2e_time, 2)
             res_dict["batch_size"] = None  # None indicates all inputs sent at once
-            if gpu_type:
-                res_dict["gpu_type"] = f"{num_gpus}x{gpu_type}"
-            else:
-                res_dict["gpu_type"] = "Unknown"
+            res_dict["gpu_type"] = f"{num_gpus}x{gpu_type}"
             res_dict["dataset"] = dataset_name
             # Determine model type based on model name (heuristic)
             res_dict["model_type"] = "instruct" if any(x in self.hf_model_name.lower() for x in ["instruct", "chat"]) else "thinking"
