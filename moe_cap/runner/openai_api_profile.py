@@ -554,6 +554,10 @@ class OpenAIAPIMoEProfiler:
             else:
                 gpu_type = "Unknown"
             
+            # Remove gpu_raw_type from metrics if present
+            if "gpu_raw_type" in res_dict:
+                del res_dict["gpu_raw_type"]
+
             # Add metadata fields to the output
             res_dict["model_name"] = self.hf_model_name
             res_dict["method"] = "vllm" ## Current hardcoded to vllm

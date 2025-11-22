@@ -257,6 +257,9 @@ class SGLangMoEActivationAnalyzer:
             else:
                 gpu_type = "Unknown"
             
+            # Filter out gpu_raw_type from metrics
+            if "gpu_raw_type" in res_dict:
+                del res_dict["gpu_raw_type"]
             # Add metadata fields to the output
             res_dict["model_name"] = self.hf_model_name
             res_dict["method"] = "sglang"
